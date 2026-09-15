@@ -14,6 +14,7 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [autoConnect, setAutoConnect] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const [soundEffects, setSoundEffects] = useState(true);
 
   return (
     <ScrollView style={styles.container}>
@@ -68,6 +69,37 @@ export default function SettingsScreen() {
 
       </View>
 
+      {/* Sound Effects */}
+
+      <View style={styles.settingCard}>
+
+        <View style={styles.settingInfo}>
+
+          <Ionicons
+            name="volume-high-outline"
+            size={26}
+          />    
+
+        <View style={styles.settingText}>
+
+            <Text style={styles.settingName}>
+              Sound Effects
+            </Text>
+
+            <Text style={styles.settingDescription}>
+              Play sound effects for device events
+            </Text>
+
+          </View>
+
+        </View>
+
+        <Switch
+          value={soundEffects}
+          onValueChange={setSoundEffects}
+        />
+
+      </View>
 
       {/* Auto Connect */}
 

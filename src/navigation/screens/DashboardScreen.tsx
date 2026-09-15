@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch } from 'react-native';
+import { View, Text, StyleSheet, Switch, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../context/IoTContext';
 
@@ -15,10 +15,10 @@ export default function DashboardScreen() {
 
     const { devices, toggleDevice } = useIoT();
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
             <Text style={styles.greeting}>
-                Good evening
+                Good day
             </Text>
 
             <Text style={styles.title}>
@@ -32,6 +32,7 @@ export default function DashboardScreen() {
                         <Ionicons
                             name="water-outline"
                             size={22}
+                            color="#fff"
                         />
 
                         <Text style={styles.sensorLabel}>
@@ -49,6 +50,7 @@ export default function DashboardScreen() {
                         <Ionicons
                             name="water-outline"
                             size={22}
+                            color="#fff"
                         />
 
                         <Text style={styles.sensorLabel}>
@@ -91,7 +93,7 @@ export default function DashboardScreen() {
 
             </View>
 
-        </View>
+        </ScrollView>
     ); */}
 
             {devices.map((device) => (
@@ -133,7 +135,7 @@ export default function DashboardScreen() {
                 </View>
 
             ))}
-        </View>
+        </ScrollView>
     );
 }
 
@@ -164,16 +166,19 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         borderRadius: 12,
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#0679ca',
     },
 
     sensorLabel: {
         fontSize: 14,
+        color: '#fff',
+        fontWeight: 'bold',
     },
 
     sensorValue: {
         fontSize: 28,
         fontWeight: 'bold',
+        color: '#fff',
         marginTop: 10,
     },
 
@@ -190,7 +195,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 18,
         borderRadius: 12,
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#0678ca17',
+        marginBottom: 15,
     },
 
     deviceInfo: {

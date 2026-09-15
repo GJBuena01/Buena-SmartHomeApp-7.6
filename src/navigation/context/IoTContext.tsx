@@ -32,6 +32,34 @@ const devices = [
         icon: 'lock-closed-outline' as const,
         status: true,
     },
+    {
+        id: 4,
+        name: 'Backyard Lights',
+        type: 'Smart Lights',
+        icon: 'bulb-outline' as const,
+        status: false,
+    },
+    {
+        id: 5,
+        name: 'Garage Door',
+        type: 'Smart Garage Door',
+        icon: 'home-outline' as const,
+        status: true,
+    },
+    {
+        id: 6,
+        name: 'Front Door Lock',
+        type: 'Smart Lock',
+        icon: 'lock-closed-outline' as const,
+        status: true,
+    },
+    {
+        id: 7,
+        name: 'Terrace Lights',
+        type: 'Smart Lights',
+        icon: 'bulb-outline' as const,
+        status: false,
+    }
 ];
 
 type IoTContextType = {
