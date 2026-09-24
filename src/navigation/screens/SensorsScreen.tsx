@@ -11,11 +11,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../context/IoTContext';
 
 export default function SensorsScreen() {
-  const { sensors, refreshSensors } = useIoT();
+  const {
+    sensors,
+    refreshSensors,
+    isLoadingSensors,
+    sensorError,
+    gatewayDisconnected,
+  } = useIoT();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
-    if (isRefreshing) {
+    if (isRefreshing || isLoadingSensors) {
       return;
     }
 
@@ -35,26 +41,41 @@ export default function SensorsScreen() {
 
         <Pressable
           onPress={handleRefresh}
-          disabled={isRefreshing}
+          disabled={isRefreshing || isLoadingSensors}
           style={({ pressed }) => [
             styles.refreshButton,
             {
-              opacity: pressed || isRefreshing ? 0.7 : 1,
+              opacity: pressed || isRefreshing || isLoadingSensors ? 0.7 : 1,
             },
           ]}
         >
           <Ionicons
-            name={isRefreshing ? 'sync-circle' : 'refresh-circle-outline'}
+            name={isRefreshing || isLoadingSensors ? 'sync-circle' : 'refresh-circle-outline'}
             size={28}
-            color={isRefreshing ? '#0679ca' : '#111'}
+            color={isRefreshing || isLoadingSensors ? '#0679ca' : '#111'}
           />
           <Text style={styles.refreshButtonText}>
-            {isRefreshing ? 'Refreshing...' : 'Refresh Sensors'}
+            {isRefreshing || isLoadingSensors ? 'Refreshing...' : 'Refresh Sensors'}
           </Text>
         </Pressable>
       </View>
 
-      {isRefreshing && <Text style={styles.infoText}>Refreshing sensors...</Text>}
+      {(isRefreshing || isLoadingSensors) && (
+        <Text style={styles.infoText}>Refreshing sensors...</Text>
+      )}
+
+      {sensorError && (
+        <View style={styles.errorBox}>
+          <Text style={styles.errorText}>{sensorError}</Text>
+          <Pressable onPress={handleRefresh} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {gatewayDisconnected && !sensorError && (
+        <Text style={styles.gatewayText}>IoT Gateway is disconnected.</Text>
+      )}
 
       <Text style={styles.subtitle}>Monitor your environment</Text>
 
@@ -123,6 +144,38 @@ const styles = StyleSheet.create({
     color: '#0679ca',
     fontWeight: '600',
     marginBottom: 15,
+  },
+
+  errorBox: {
+    backgroundColor: '#fde7e7',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 15,
+  },
+
+  errorText: {
+    color: '#b42318',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+
+  gatewayText: {
+    color: '#b42318',
+    fontWeight: '700',
+    marginBottom: 15,
+  },
+
+  retryButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#0679ca',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
   },
 
   refreshButton: {

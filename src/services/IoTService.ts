@@ -10,15 +10,16 @@ const sensorStore: SensorData = {
   lightLevel: 720,
 };
 
-const maybeFail = (message: string) => {
-  if (Math.random() < 0.2) {
-    throw new Error(message);
+const maybeFail = (message: string, failRate = 0.3) => {
+  if (Math.random() < failRate) {
+    const gatewayFailure = Math.random() < 0.5;
+    throw new Error(gatewayFailure ? 'IoT Gateway is disconnected.' : message);
   }
 };
 
 export async function getSensorData(): Promise<SensorData> {
   await delay(1500);
-  maybeFail('Unable to fetch sensor data from the IoT backend.');
+  maybeFail('Unable to retrieve sensor data.');
 
   const nextData: SensorData = {
     temperature: 24 + Math.floor(Math.random() * 8),
@@ -33,7 +34,7 @@ export async function getSensorData(): Promise<SensorData> {
 
 export async function getDevices(): Promise<Device[]> {
   await delay(1000);
-  maybeFail('Unable to fetch devices from the IoT backend.');
+  maybeFail('Unable to retrieve devices.');
 
   return devicesStore.map((device) => ({ ...device }));
 }

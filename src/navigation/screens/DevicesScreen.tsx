@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  Pressable,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,10 @@ export default function DevicesScreen() {
     devices,
     toggleDevice,
     isProcessing,
+    isLoadingDevices,
+    deviceError,
+    gatewayDisconnected,
+    loadDevices,
   } = useIoT();
 
   return (
@@ -31,10 +36,32 @@ export default function DevicesScreen() {
         Control your connected devices
       </Text>
 
+      {isLoadingDevices && (
+        <Text style={styles.processingText}>
+          Loading devices...
+        </Text>
+      )}
+
       {isProcessing && (
         <Text style={styles.processingText}>
           Updating device status...
         </Text>
+      )}
+
+      {deviceError && (
+        <View style={styles.errorBox}>
+          <Text style={styles.errorText}>{deviceError}</Text>
+          <Pressable
+            onPress={() => loadDevices()}
+            style={styles.retryButton}
+          >
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {gatewayDisconnected && !deviceError && (
+        <Text style={styles.gatewayText}>IoT Gateway is disconnected.</Text>
       )}
 
       {devices.map((device) => (
@@ -112,6 +139,38 @@ const styles = StyleSheet.create({
     color: '#0679ca',
     fontWeight: '600',
     marginBottom: 15,
+  },
+
+  errorBox: {
+    backgroundColor: '#fde7e7',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 15,
+  },
+
+  errorText: {
+    color: '#b42318',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+
+  gatewayText: {
+    color: '#b42318',
+    fontWeight: '700',
+    marginBottom: 15,
+  },
+
+  retryButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#0679ca',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
   },
 
   deviceCard: {
