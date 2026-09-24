@@ -17,6 +17,7 @@ export default function DevicesScreen() {
   const {
     devices,
     toggleDevice,
+    isProcessing,
   } = useIoT();
 
   return (
@@ -29,6 +30,12 @@ export default function DevicesScreen() {
       <Text style={styles.subtitle}>
         Control your connected devices
       </Text>
+
+      {isProcessing && (
+        <Text style={styles.processingText}>
+          Updating device status...
+        </Text>
+      )}
 
       {devices.map((device) => (
 
@@ -98,6 +105,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
     marginBottom: 25,
+  },
+
+  processingText: {
+    fontSize: 13,
+    color: '#0679ca',
+    fontWeight: '600',
+    marginBottom: 15,
   },
 
   deviceCard: {
