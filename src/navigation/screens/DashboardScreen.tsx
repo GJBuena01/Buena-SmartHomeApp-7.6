@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Switch, ScrollView, SafeAreaViewBase } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../context/IoTContext';
 
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        padding: 20,
+        padding: 20,   
     },
 
     greeting: {

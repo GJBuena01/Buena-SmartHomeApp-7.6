@@ -46,20 +46,7 @@ const devices = [
         icon: 'home-outline' as const,
         status: true,
     },
-    {
-        id: 6,
-        name: 'Front Door Lock',
-        type: 'Smart Lock',
-        icon: 'lock-closed-outline' as const,
-        status: true,
-    },
-    {
-        id: 7,
-        name: 'Terrace Lights',
-        type: 'Smart Lights',
-        icon: 'bulb-outline' as const,
-        status: false,
-    }
+
 ];
 
 type IoTContextType = {
