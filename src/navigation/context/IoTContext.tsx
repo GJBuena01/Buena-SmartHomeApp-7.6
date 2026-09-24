@@ -1,6 +1,7 @@
 import React, {
     createContext,
     useContext,
+    useEffect,
     useState,
 } from 'react';
 
@@ -9,12 +10,17 @@ import {
     type SensorData,
     initialDevices,
 } from '../../models/IoTModels';
+import {
+    getDevices,
+    getSensorData,
+    updateDeviceStatus,
+} from '../../services/IoTService';
 
 type IoTContextType = {
     devices: Device[];
     sensors: SensorData;
-    updateSensors: (nextSensors: Partial<SensorData>) => void;
-    toggleDevice: (id: number, value: boolean) => void;
+    toggleDevice: (id: number, value: boolean) => Promise<void>;
+    refreshSensors: () => Promise<void>;
     isProcessing: boolean;
 };
 
@@ -39,23 +45,58 @@ export function IoTProvider({
         lightLevel: 720,
     });
 
-    const toggleDevice = (id: number, value: boolean) => {
-        setIsProcessing(true);
+    const loadInitialData = async () => {
+        try {
+            const [devicesFromApi, sensorDataFromApi] = await Promise.all([
+                getDevices(),
+                getSensorData(),
+            ]);
 
-        setTimeout(() => {
-            setDeviceStatus((prev) => ({
-                ...prev,
-                [id]: value,
-            }));
-            setIsProcessing(false);
-        }, 800);
+            const mappedStatus = devicesFromApi.reduce((acc, device) => {
+                acc[device.id] = device.status;
+                return acc;
+            }, {} as Record<number, boolean>);
+
+            setDeviceStatus(mappedStatus);
+            setSensors(sensorDataFromApi);
+        } catch (error) {
+            console.warn('Failed to load IoT data', error);
+            setDeviceStatus(
+                initialDevices.reduce((acc, device) => {
+                    acc[device.id] = device.status;
+                    return acc;
+                }, {} as Record<number, boolean>)
+            );
+        }
     };
 
-    const updateSensors = (nextSensors: Partial<SensorData>) => {
-        setSensors((prev) => ({
-            ...prev,
-            ...nextSensors,
-        }));
+    useEffect(() => {
+        void loadInitialData();
+    }, []);
+
+    const toggleDevice = async (id: number, value: boolean) => {
+        setIsProcessing(true);
+
+        try {
+            const updatedDevice = await updateDeviceStatus(id, value);
+            setDeviceStatus((prev) => ({
+                ...prev,
+                [updatedDevice.id]: updatedDevice.status,
+            }));
+        } catch (error) {
+            console.warn('Failed to update device status', error);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const refreshSensors = async () => {
+        try {
+            const nextSensorData = await getSensorData();
+            setSensors(nextSensorData);
+        } catch (error) {
+            console.warn('Failed to refresh sensor data', error);
+        }
     };
 
     const updatedDevices: Device[] = initialDevices.map((device) => ({
@@ -68,8 +109,8 @@ export function IoTProvider({
             value={{
                 devices: updatedDevices,
                 sensors,
-                updateSensors,
                 toggleDevice,
+                refreshSensors,
                 isProcessing,
             }}
         >

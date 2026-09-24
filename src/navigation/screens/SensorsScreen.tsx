@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,33 +11,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../context/IoTContext';
 
 export default function SensorsScreen() {
-  const { sensors, updateSensors } = useIoT();
+  const { sensors, refreshSensors } = useIoT();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  const handleRefresh = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
+  const handleRefresh = async () => {
+    if (isRefreshing) {
+      return;
     }
 
     setIsRefreshing(true);
 
-    timerRef.current = setTimeout(() => {
-      updateSensors({
-        temperature: 24 + Math.floor(Math.random() * 8),
-        humidity: 50 + Math.floor(Math.random() * 25),
-        lightLevel: 600 + Math.floor(Math.random() * 450),
-      });
+    try {
+      await refreshSensors();
+    } finally {
       setIsRefreshing(false);
-    }, 2000);
+    }
   };
 
   return (
